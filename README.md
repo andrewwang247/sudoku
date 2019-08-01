@@ -43,6 +43,7 @@ The Grid is a 9-by-9 two-dimensional array of Squares given by std::array< std::
 
 ## Print Format
 
+~~~~C++
 - - - - - - - - - - - - -
 | x x x | x x x | x x x |
 | x x x | x x x | x x x |
@@ -55,3 +56,5 @@ The Grid is a 9-by-9 two-dimensional array of Squares given by std::array< std::
 | x x x | x x x | x x x |
 | x x x | x x x | x x x |
 | x x x | x x x | x x x |
+- - - - - - - - - - - - -
+~~~~
