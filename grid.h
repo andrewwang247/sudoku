@@ -3,13 +3,18 @@
 #include <array>
 #include <iterator>
 
-using grid_t = std::array< std::array< Square, NUM_DIGITS >, NUM_DIGITS >;
+using row_t = std::array< Square, NUM_DIGITS >;
+using grid_t = std::array< row_t, NUM_DIGITS >;
+
+// Forward declaration for Grid class.
+class grid_iterator;
 
 class Grid {
+using iterator = grid_iterator;
 private:
 
 	// Two-dimensional 9-by-9 array of Squares
-	grid_t grid;
+	grid_t m_grid;
 
 	enum class PuzzleState {
 		Solution_Exists, No_Solution, Invalid_Puzzle
@@ -27,6 +32,7 @@ public:
 	 * Reads a 9x9 square of digits from is into the grid.
 	 * Non-numeric characters are ignored in the input.
 	 * Use a capital 'X' for unknown entries.
+	 * ASSUMES: g is in just-constructed state.
 	 * REPLACES: Grid, state.
 	 * THROWS IF : grid cannot be formed.
 	 */
@@ -44,54 +50,30 @@ public:
 	 * Only solves if state != Invalid_Puzzle.
 	 * MODIFIES: grid, solution_exists.
 	 */
-	inline void solve();
+	void solve();
+
+	// Begin and end iterators.
+	inline iterator begin();
+	inline iterator end();
 
 private:
 
 	// Contains the state of the puzzle. Should remain relatively unchanged after >>.
-	PuzzleState state;
+	PuzzleState m_state;
 
-	// Iterator class for the grid - leverages std::array's iterator
-	class iterator : std::iterator< std::bidirectional_iterator_tag, Square > {
-	private:
-	
-		// A reference to the container we are pointing at.
-		Grid& grid_ref;
-	
-		// Contains two unidimensional iterators under the hood that keep track of everything.
-		std::array< std::array< Square, NUM_DIGITS >, NUM_DIGITS >::iterator it_1;
-					std::array< Square, NUM_DIGITS >			  ::iterator it_2;
-	public:
+	/**
+	 * Used at the beginning to ensure that the grid is in a valid state before starting.
+	 * If invalid, modifies m_state to the invalid state.
+	 */
+	void check_state() noexcept;
 
-		// Constructor taking in types. Other ctors are defaulted.
-		iterator( decltype(grid_ref) grid_in, decltype(it_1) it_1_in, decltype(it_2) it_2_in );
-
-		// Dereference operator
-		Square& operator*();
-
-		// Comparison operators
-		inline bool operator==( const iterator& other ) const;
-		inline bool operator!=( const iterator& other ) const;
-
-		// Decrement/increment operators find the previous/next open Square in grid_ref.
-		iterator& operator++();
-		iterator  operator++(int);
-		iterator& operator--();
-		iterator  operator--(int);
-	};
-
-	// Begin and end iterators.
-	inline iterator begin() const;
-	inline iterator end() const;
-
-private:
 	/**
 	 * Updates the bitset in the Square *it to reflect the possible values *it can take.
-	 * @param it: A Grid::iterator reference pointing to a square in the grid.
+	 * @param it: A iterator reference pointing to a square in the grid.
 	 * REQUIRES: Grid is in a valid state.
 	 * MODIFIES: it->possible_values.
 	 */
-	void find_possible( iterator& it );
+	void find_possible( iterator it ) noexcept;
 
 	/**
 	 * ! This procedure is at the heart of the backtracking algorithm.
@@ -99,4 +81,32 @@ private:
 	 * RETURNS: true if puzzle is solved and false if no solution exists.
 	 */
 	bool solve_helper ( iterator it );
+};
+
+// Iterator class for the grid - leverages std::array's iterator
+class grid_iterator : std::iterator< std::forward_iterator_tag, Square > {
+private:
+
+	// Contains a Square pointer under the hood that keep track of everything.
+	Square* m_ptr;
+	// A reference to the underlying grid.
+	grid_t& m_grid;
+
+public:
+	/**
+	 * We need information about the underlying grid container.
+	 * This constructor thus takes in both.
+	 */
+	grid_iterator( decltype(m_ptr) ptr_in, decltype(m_grid) grid_in );
+
+	// Dereference operator
+	inline Square& operator*();
+
+	// Comparison operators
+	inline bool operator==( const grid_iterator& other ) const;
+	inline bool operator!=( const grid_iterator& other ) const;
+
+	// Increment operators to find the next open Square in grid_ref.
+	grid_iterator& operator++();
+	grid_iterator  operator++(int);
 };

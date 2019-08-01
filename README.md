@@ -39,33 +39,19 @@ At the most basic level, a Square represents each individual position on the Sud
 
 ### Grid
 
-The Grid is a 9-by-9 two-dimensional array of Squares given by std::array< std::array< Square, 9 >, 9 >. This class is equipped with smart bidirectional iterators (STL style) that range over the modifiable Squares (those marked 'X' in the input) contained in Grid. The fixed squares (those given in the problem) will be skipped by Grid's iterators to make code more readable. The iterators traverse row by row, left to right. The final end iterator will be Grid.end() == underlying_array.back().end().
+The Grid is a 9-by-9 two-dimensional array of Squares given by std::array< std::array< Square, 9 >, 9 >. This class is equipped with smart forward iterators (STL style) that range over the modifiable Squares (those marked 0 in the input) contained in Grid. The fixed squares (those given in the problem) will be skipped by Grid's iterators to make code more readable. The iterators traverse row by row, left to right. The final end iterator will be Grid.end() == underlying_array.back().end().
 
-## Pseudocode
+## Print Format
 
-TODO - get rid of this section when I'm finished.
-
-~~~~C++
-bool solve( Grid::iterator sq ) {
-
-    // If we've reached the end of the grid, there's nothing more to do!
-    if ( sq == grid.end() ) return true;
-
-    // Call a function that sets the bitset to reflect the possible digit values in can take.
-    grid.get_valid_digits( sq );
-
-    // Iterate over the possible digits (use another way to loop over bitset)
-    for ( auto digit : sq->possible ) {
-        // Set the square to the digit.
-        sq->number = digit;
-
-        // Recursive call - if it returns success, we're done. Otherwise, keep trying digits!
-        if ( solve( sq->next() ) ) return true;
-    }
-
-    /*
-    By reaching this point, there are one of two options possible. Either every digit returned false on the recursive call, or the bitset was all 0's (no valid digits) so the loop body never executes. In both cases, this square doesn't work. Return false and backtrack.
-    */
-    return false;
-}
-~~~~
+- - - - - - - - - - - - -
+| x x x | x x x | x x x |
+| x x x | x x x | x x x |
+| x x x | x x x | x x x |
+- - - - - - - - - - - - -
+| x x x | x x x | x x x |
+| x x x | x x x | x x x |
+| x x x | x x x | x x x |
+- - - - - - - - - - - - -
+| x x x | x x x | x x x |
+| x x x | x x x | x x x |
+| x x x | x x x | x x x |

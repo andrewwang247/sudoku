@@ -6,7 +6,7 @@
 #include <vector>
 
 constexpr unsigned NUM_DIGITS = 9;
-constexpr unsigned BOX_SIDE = 3;
+constexpr unsigned BOX_SIDE = NUM_DIGITS / 3;
 
 /**
  * A Square represents each individual position on the Sudoku grid.
@@ -18,10 +18,10 @@ public:
 	unsigned m_row, m_column;
 
 	// The current number of this square (0 for unassigned).
-	unsigned char number;
+	unsigned char m_number;
 
 	// Reports the possible digits where bitset[i] represents whether i + 1 is a valid number.
-	std::optional< std::bitset<NUM_DIGITS> > possible_values;
+	std::optional< std::bitset<NUM_DIGITS> > m_possible_values;
 
 	// A simple constructor given the coordinates of this square. Default value of 0 if no number is given.
 	Square() noexcept;
