@@ -3,6 +3,7 @@
 #include <optional>
 #include <bitset>
 #include <utility>
+#include <vector>
 
 constexpr unsigned NUM_DIGITS = 9;
 constexpr unsigned BOX_SIDE = 3;
@@ -11,12 +12,10 @@ constexpr unsigned BOX_SIDE = 3;
  * A Square represents each individual position on the Sudoku grid.
  */
 class Square {
-private:
-
-	// The (row, column) coordinates of this Square. Could also just be 2 unsigned variables?
-	const std::pair< unsigned, unsigned > coordinates;
-
 public:
+
+	// The row and column coordinates of this Square.
+	unsigned m_row, m_column;
 
 	// The current number of this square (0 for unassigned).
 	unsigned char number;
@@ -25,12 +24,17 @@ public:
 	std::optional< std::bitset<NUM_DIGITS> > possible_values;
 
 	// A simple constructor given the coordinates of this square. Default value of 0 if no number is given.
-	Square( unsigned row, unsigned col, unsigned char num = 0 ) noexcept;
+	Square() noexcept;
 
-	// Returns the row/column values respectively.
-	inline unsigned row() const noexcept;
-	inline unsigned column() const noexcept;
+	/**
+	 * Looks through possible_values and writes down those that are possible.
+	 * REQUIRES : possible_values.has_value(). Otherwise, std::optional throws.
+	 */
+	std::vector<unsigned char> possible() const;
 
-	// A basic print operator that simply prints out the value associated with it.
+	/**
+	 * A basic print operator that simply prints out the value associated with it.
+	 * Uses unary prefix operator+ to get numeric result of number.
+	 */
 	friend std::ostream& operator<< ( std::ostream& os, const Square& sq );
 };

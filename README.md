@@ -35,13 +35,15 @@ At the most basic level, a Square represents each individual position on the Sud
 
 - unsigned char to represent the current number (0 for unassigned squares). We will print unsigned chars as numbers using the prefix unary operator+.
 - std::optional< std::bitset<9> > that reports the possible digits where bitset[i] represents whether i + 1 is a valid number here. We use std::optional since squares given in the problem statement do not require that we track their possible digits. They are set in stone.
-- const std::pair< unsigned, unsigned > giving that (row, column) coordinates of the given Square.
+- unsigned int row and column coordinates of the given Square.
 
 ### Grid
 
 The Grid is a 9-by-9 two-dimensional array of Squares given by std::array< std::array< Square, 9 >, 9 >. This class is equipped with smart bidirectional iterators (STL style) that range over the modifiable Squares (those marked 'X' in the input) contained in Grid. The fixed squares (those given in the problem) will be skipped by Grid's iterators to make code more readable. The iterators traverse row by row, left to right. The final end iterator will be Grid.end() == underlying_array.back().end().
 
 ## Pseudocode
+
+TODO - get rid of this section when I'm finished.
 
 ~~~~C++
 bool solve( Grid::iterator sq ) {

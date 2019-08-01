@@ -3,7 +3,6 @@
 #include <array>
 #include <iterator>
 
-constexpr unsigned GRID_SIZE = 9 * 9;
 using grid_t = std::array< std::array< Square, NUM_DIGITS >, NUM_DIGITS >;
 
 class Grid {
@@ -95,6 +94,7 @@ private:
 	void find_possible( iterator& it );
 
 	/**
+	 * ! This procedure is at the heart of the backtracking algorithm.
 	 * Helper function for Grid::solve that allows for recursive backtracking calls.
 	 * RETURNS: true if puzzle is solved and false if no solution exists.
 	 */
