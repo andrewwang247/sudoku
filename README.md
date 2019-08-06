@@ -6,7 +6,7 @@ An expressively coded, time & space efficient 9-by-9 Sudoku puzzle solver using 
 
 Usage: ./sudoku < puzzles_list.txt > solutions.txt
 
-The input is piped from cin but we recommend using IO redirection to get the puzzles piped into the program. Puzzles should be formatted as a 9x9 square of digits. Non-numeric characters are ignored in the input. Use a capital 'X' for unknown entries. For each puzzle in puzzles_list.txt, the solver will output a well-formatted solution (if it exists) to solutions.txt.
+The input is piped from cin but we recommend using IO redirection to get the puzzles piped into the program. Puzzles should be formatted as a 9x9 square of digits. Non-numeric characters are ignored in the input. Use a numeric '0' for unknown entries. For each puzzle in puzzles_list.txt, the solver will output a well-formatted solution (if it exists) to solutions.txt.
 
 ## Algorithm Overview
 

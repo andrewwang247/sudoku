@@ -80,7 +80,7 @@ istream& operator>>( istream& is, Grid& g ) {
 			
 			g.m_grid[row][col].m_number = static_cast<unsigned char>(buffer);
 			// Recall that the std::optional is default constructed to nullopt in Square.
-			if (buffer > 0) {
+			if (buffer == 0) {
 				bitset<NUM_DIGITS> bs;
 				bs.set();
 				g.m_grid[row][col].m_possible_values.emplace(bs);
