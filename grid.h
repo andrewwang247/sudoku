@@ -1,10 +1,8 @@
 #pragma once
 #include "square.h"
 #include <array>
-#include <iterator>
 
-using row_t = std::array< Square, NUM_DIGITS >;
-using grid_t = std::array< row_t, NUM_DIGITS >;
+using grid_t = std::array< Square, NUM_DIGITS * NUM_DIGITS >;
 
 class Grid {
 private:
@@ -17,19 +15,19 @@ private:
 		Solution_Exists, No_Solution, Invalid_Puzzle
 	};
 
-	/**
-	 * Finds the first valid iterator position in the half-open
-	 * range given by ( it, m_grid.back().end() ].
-	 */
-	inline row_t::iterator next_valid( row_t::iterator it );
-
 public:
 
 	/**
 	 * Basic default constructor that sets coordinates on Squares,
 	 * initializes all values to 0, and sets state to Solution_Exists.
 	 */
-	Grid();
+	Grid( std::istream& is );
+
+	/**
+	 * Basic reference access by row and column index.
+	 */
+	inline Square& at( unsigned row, unsigned col );
+	inline const Square& at( unsigned row, unsigned col ) const;
 
 	/**
 	 * Reads a 9x9 square of digits from is into the grid.
@@ -72,12 +70,12 @@ private:
 	 * REQUIRES: Grid is in a valid state.
 	 * MODIFIES: it->possible_values.
 	 */
-	void find_possible( row_t::iterator it ) noexcept;
+	void find_possible( grid_t::iterator it ) noexcept;
 
 	/**
 	 * ! This procedure is at the heart of the backtracking algorithm.
 	 * Helper function for Grid::solve that allows for recursive backtracking calls.
 	 * RETURNS: true if puzzle is solved and false if no solution exists.
 	 */
-	bool solve_helper ( row_t::iterator it );
+	bool solve_helper ( grid_t::iterator it );
 };

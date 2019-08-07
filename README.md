@@ -39,7 +39,7 @@ At the most basic level, a Square represents each individual position on the Sud
 
 ### Grid
 
-The Grid is a 9-by-9 two-dimensional array of Squares given by std::array< std::array< Square, 9 >, 9 >. The fixed squares (those given in the problem) will be skipped by Grid's iterators to make code more readable. The iterators traverse row by row, left to right. The final end iterator will be Grid.end() == underlying_array.back().end().
+The Grid's API is a 9-by-9 two-dimensional array of Squares implemented as the one-dimensional std::array< Square, 9 * 9 >. The fixed squares (those given in the problem) will be skipped over while iterating over the open squares to make code more readable.
 
 ## Print Format
 

@@ -5,8 +5,10 @@ using namespace std;
 int main() {
 	ios_base::sync_with_stdio( false );
 
-	for (Grid sudoku; cin >> sudoku; ) {
+	while ( cin ) {
+		Grid sudoku ( cin );
+		cout << "Input Puzzle:\n" << sudoku;
 		sudoku.solve();
-		cout << sudoku;
+		cout << "Computer Solution:\n" << sudoku;
 	}
 }
