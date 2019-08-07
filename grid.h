@@ -6,19 +6,22 @@
 using row_t = std::array< Square, NUM_DIGITS >;
 using grid_t = std::array< row_t, NUM_DIGITS >;
 
-// Forward declaration for Grid class.
-class grid_iterator;
-
 class Grid {
-using iterator = grid_iterator;
 private:
 
 	// Two-dimensional 9-by-9 array of Squares
 	grid_t m_grid;
 
+	// Enumeration of possible puzzle States.
 	enum class PuzzleState {
 		Solution_Exists, No_Solution, Invalid_Puzzle
 	};
+
+	/**
+	 * Finds the first valid iterator position in the half-open
+	 * range given by ( it, m_grid.back().end() ].
+	 */
+	inline row_t::iterator next_valid( row_t::iterator it );
 
 public:
 
@@ -52,10 +55,6 @@ public:
 	 */
 	void solve();
 
-	// Begin and end iterators.
-	inline iterator begin();
-	inline iterator end();
-
 private:
 
 	// Contains the state of the puzzle. Should remain relatively unchanged after >>.
@@ -73,40 +72,12 @@ private:
 	 * REQUIRES: Grid is in a valid state.
 	 * MODIFIES: it->possible_values.
 	 */
-	void find_possible( iterator it ) noexcept;
+	void find_possible( row_t::iterator it ) noexcept;
 
 	/**
 	 * ! This procedure is at the heart of the backtracking algorithm.
 	 * Helper function for Grid::solve that allows for recursive backtracking calls.
 	 * RETURNS: true if puzzle is solved and false if no solution exists.
 	 */
-	bool solve_helper ( iterator it );
-};
-
-// Iterator class for the grid - leverages std::array's iterator
-class grid_iterator : std::iterator< std::forward_iterator_tag, Square > {
-private:
-
-	// Contains a Square pointer under the hood that keep track of everything.
-	Square* m_ptr;
-	// A reference to the underlying grid.
-	grid_t& m_grid;
-
-public:
-	/**
-	 * We need information about the underlying grid container.
-	 * This constructor thus takes in both.
-	 */
-	grid_iterator( decltype(m_ptr) ptr_in, decltype(m_grid) grid_in );
-
-	// Dereference operator
-	inline Square& operator*();
-
-	// Comparison operators
-	inline bool operator==( const grid_iterator& other ) const;
-	inline bool operator!=( const grid_iterator& other ) const;
-
-	// Increment operators to find the next open Square in grid_ref.
-	grid_iterator& operator++();
-	grid_iterator  operator++(int);
+	bool solve_helper ( row_t::iterator it );
 };

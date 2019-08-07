@@ -39,7 +39,7 @@ At the most basic level, a Square represents each individual position on the Sud
 
 ### Grid
 
-The Grid is a 9-by-9 two-dimensional array of Squares given by std::array< std::array< Square, 9 >, 9 >. This class is equipped with smart forward iterators (STL style) that range over the modifiable Squares (those marked 0 in the input) contained in Grid. The fixed squares (those given in the problem) will be skipped by Grid's iterators to make code more readable. The iterators traverse row by row, left to right. The final end iterator will be Grid.end() == underlying_array.back().end().
+The Grid is a 9-by-9 two-dimensional array of Squares given by std::array< std::array< Square, 9 >, 9 >. The fixed squares (those given in the problem) will be skipped by Grid's iterators to make code more readable. The iterators traverse row by row, left to right. The final end iterator will be Grid.end() == underlying_array.back().end().
 
 ## Print Format
 

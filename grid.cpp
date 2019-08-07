@@ -15,22 +15,6 @@ inline bool is_valid_square( const Square& sq ) {
 }
 
 /**
- * Helper function to find next valid square.
- * REQUIRES: ptr is non-null. Does not check for this!
- */
-Square* get_next_valid( const Square* ptr, grid_t& g ) {
-	// Iterate through the grid, starting from the current ptr position.
-	for ( unsigned row = ptr->m_row; row < NUM_DIGITS; ++row ) {
-		for ( unsigned col = ptr->m_column; col < NUM_DIGITS; ++col ) {
-			// Indicates that an open place was found!
-			if ( is_valid_square( g[row][col] ) ) return &g[row][col];
-		}
-	}
-	// Nothing was found. Set pointer to very end.
-	return g.back().end();
-}
-
-/**
  * Checks the 3-by-3 subgrid starting at (row_start, col_start)
  * REQUIRES: bound indexing is correct (ie row_start, col_start <= 6)
  */
@@ -66,6 +50,20 @@ Grid::Grid() : m_state( PuzzleState::Solution_Exists ) {
 			sq.m_column = j;
 		}
 	}
+}
+
+inline row_t::iterator Grid::next_valid( row_t::iterator it ) {
+	do {
+		// If there's still stuff left in the row, increment.
+		if (it->m_column < NUM_DIGITS - 1) ++it;
+		else if (it->m_row < NUM_DIGITS - 1) {
+			// Otherwise, move onto the next row if there's space.
+			it = &m_grid[it->m_row + 1][0];
+		} else {
+			it = m_grid.back().end();
+		}
+	} while ( it != m_grid.back().end() && is_valid_square(*it) );
+	return it;
 }
 
 istream& operator>>( istream& is, Grid& g ) {
@@ -128,15 +126,7 @@ void Grid::solve() {
 	// No work needs to be done if the puzzle is invalid.
 	if ( m_state == PuzzleState::Invalid_Puzzle ) return;
 	// Fancy ternary operator that sets state based on the result of solve_helper.
-	m_state = solve_helper( begin() ) ? PuzzleState::Solution_Exists : PuzzleState::No_Solution;
-}
-
-grid_iterator Grid::begin() {
-	return grid_iterator( get_next_valid( m_grid.front().begin(), m_grid ), m_grid );
-}
-
-grid_iterator Grid::end() {
-	return grid_iterator( m_grid.back().end(), m_grid );
+	m_state = solve_helper( m_grid.front().begin() ) ? PuzzleState::Solution_Exists : PuzzleState::No_Solution;
 }
 
 void Grid::check_state() noexcept {
@@ -192,7 +182,7 @@ void Grid::check_state() noexcept {
 	}
 }
 
-void Grid::find_possible( grid_iterator it ) noexcept {
+void Grid::find_possible( row_t::iterator it ) noexcept {
 	// Start with all values possible.
 	auto& square = *it;
 	auto& bs = square.m_possible_values.value();
@@ -220,28 +210,30 @@ void Grid::find_possible( grid_iterator it ) noexcept {
 	}
 }
 
-bool Grid::solve_helper( grid_iterator it ) {
+bool Grid::solve_helper( row_t::iterator it ) {
 	// If we've reached the end of the grid, there's nothing more to do!
-	if ( it == end() ) return true;
+	if ( it == m_grid.back().end() ) return true;
 
 	// Let the bitset reflect the possible digit values.
 	find_possible( it );
 
-	const auto& bs = (*it).m_possible_values.value();
+	const auto& bs = it->m_possible_values.value();
 	// If the bitset has no possible values for this square, return false.
 	if ( bs.none() ) return false;
 
-	// Iterate over the possible digits
-	auto digits = (*it).possible();
+	// Get the possible digits.
+	auto digits = it->possible();
+	// Record the current iterator and find next valid.
 	auto original_it = it++;
+	const auto next_it ( next_valid(it) );
 
 	for ( auto num : digits ) {
 	
 		// Set the square to this number.
-		(*original_it).m_number = num;
+		original_it->m_number = num;
 
 		// Recursive call - if it returns success, we're done. Otherwise, keep trying digits!
-		if ( solve_helper( it ) ) return true;
+		if ( solve_helper( next_it ) ) return true;
 	}
 	/*
     By reaching this point, there are one of two options possible.
@@ -251,24 +243,4 @@ bool Grid::solve_helper( grid_iterator it ) {
 	Return false and backtrack.
     */
     return false;
-}
-
-grid_iterator::grid_iterator( decltype(m_ptr) ptr_in, decltype(m_grid) grid_in ) :
-	m_ptr ( ptr_in ), m_grid ( grid_in ) { }
-
-Square& grid_iterator::operator*() { return *m_ptr; }
-
-bool grid_iterator::operator==( const grid_iterator& other ) const { return m_ptr == other.m_ptr; }
-
-bool grid_iterator::operator!=( const grid_iterator& other ) const { return m_ptr != other.m_ptr; }
-
-grid_iterator& grid_iterator::operator++() {
-	m_ptr = get_next_valid( m_ptr, m_grid );
-	return *this;
-}
-
-grid_iterator grid_iterator::operator++(int) {
-	auto temp = *this;
-	++*this;
-	return temp;
 }
