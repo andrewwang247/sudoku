@@ -7,7 +7,7 @@ using namespace std;
 /*------ HELPER FUNCTIONS ------*/
 
 /**
- * Returns whether ptr points to a valid square or not.
+ * Returns whether ptr points to an open square or not.
  * REQUIRES: ptr is non-null. Does not check for this!
  */
 inline bool is_valid_square( const Square& sq ) {
@@ -62,29 +62,33 @@ inline row_t::iterator Grid::next_valid( row_t::iterator it ) {
 		} else {
 			it = m_grid.back().end();
 		}
-	} while ( it != m_grid.back().end() && is_valid_square(*it) );
+	} while ( it != m_grid.back().end() && !is_valid_square(*it) );
 	return it;
 }
 
 istream& operator>>( istream& is, Grid& g ) {
 	// Read 81 integer valued items from is.
-	int buffer;
+	char buffer;
 	for (unsigned row = 0; row < NUM_DIGITS; ++row) {
 		for (unsigned col = 0; col < NUM_DIGITS; ++col) {
-			// Get as int to ensure bound checks are met.
-			is >> buffer;
-			if ( buffer < 0 || static_cast<unsigned>(buffer) > NUM_DIGITS )
+			// Keep getting chars until digit is found.
+			do { is >> buffer; } while (!isdigit(buffer));
+			int number = buffer - '0';
+
+			if ( buffer < 0 || static_cast<unsigned>(number) > NUM_DIGITS )
 				throw runtime_error("Input Sudoku digit out of bounds.");
 			
-			g.m_grid[row][col].m_number = static_cast<unsigned char>(buffer);
+			g.m_grid[row][col].m_number = static_cast<unsigned char>(number);
 			// Recall that the std::optional is default constructed to nullopt in Square.
-			if (buffer == 0) {
+			if (number == 0) {
 				bitset<NUM_DIGITS> bs;
 				bs.set();
 				g.m_grid[row][col].m_possible_values.emplace(bs);
 			}
 		}
 	}
+	// Ensure that the state is valid.
+	g.check_state();
 	return is;
 }
 
@@ -108,6 +112,7 @@ ostream& operator<<( ostream& os, Grid& g ) {
 					}
 					cout << "| ";
 				}
+				cout << '\n';
 			}
 		}
 		cout << "- - - - - - - - - - - - -\n";
@@ -125,8 +130,11 @@ ostream& operator<<( ostream& os, Grid& g ) {
 void Grid::solve() {
 	// No work needs to be done if the puzzle is invalid.
 	if ( m_state == PuzzleState::Invalid_Puzzle ) return;
+	// Get the first open square.
+	const auto b_it ( m_grid.front().begin() );
+	row_t::iterator it = is_valid_square( *b_it ) ? b_it : next_valid( b_it );
 	// Fancy ternary operator that sets state based on the result of solve_helper.
-	m_state = solve_helper( m_grid.front().begin() ) ? PuzzleState::Solution_Exists : PuzzleState::No_Solution;
+	m_state = solve_helper( it ) ? PuzzleState::Solution_Exists : PuzzleState::No_Solution;
 }
 
 void Grid::check_state() noexcept {
@@ -217,14 +225,13 @@ bool Grid::solve_helper( row_t::iterator it ) {
 	// Let the bitset reflect the possible digit values.
 	find_possible( it );
 
-	const auto& bs = it->m_possible_values.value();
 	// If the bitset has no possible values for this square, return false.
-	if ( bs.none() ) return false;
+	if ( it->m_possible_values.value().none() ) return false;
 
 	// Get the possible digits.
 	auto digits = it->possible();
 	// Record the current iterator and find next valid.
-	auto original_it = it++;
+	auto original_it = it;
 	const auto next_it ( next_valid(it) );
 
 	for ( auto num : digits ) {
