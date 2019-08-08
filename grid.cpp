@@ -257,5 +257,6 @@ bool Grid::solve_helper( grid_t::iterator it ) {
 	never executes. In both cases, this square doesn't work.
 	Return false and backtrack.
     */
+    original_it->m_number = 0;
     return false;
 }
