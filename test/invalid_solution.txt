@@ -1,0 +1,4 @@
+Input Puzzle:
+The given puzzle is invalid.
+Computer Solution:
+The given puzzle is invalid.
