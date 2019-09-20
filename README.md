@@ -1,12 +1,12 @@
 # Sudoku
 
-An expressively coded, time & space efficient 9-by-9 Sudoku puzzle solver using recursive backtracking.
+An expressively coded, time & space efficient n-by-n Sudoku puzzle solver using recursive backtracking.
 
 ## Formatting
 
 Usage: ./sudoku < puzzles_list.txt > solutions.txt
 
-The input is piped from cin but we recommend using IO redirection to get the puzzles piped into the program. Puzzles should be formatted as a 9x9 square of digits. Non-numeric characters are ignored in the input. Use a numeric '0' for unknown entries. For each puzzle in puzzles_list.txt, the solver will output a well-formatted solution (if it exists) to solutions.txt.
+The input is piped from cin but we recommend using IO redirection to get the puzzles piped into the program. Puzzles should be formatted as a n x n square of digits. Non-numeric characters are ignored in the input. Use a numeric '0' for unknown entries. For each puzzle in puzzles_list.txt, the solver will output a well-formatted solution (if it exists) to solutions.txt.
 
 ## Algorithm Overview
 
@@ -34,12 +34,12 @@ Additionally, the program will ensure that the given puzzle is valid. It will re
 At the most basic level, a Square represents each individual position on the Sudoku grid. It consists of:
 
 - unsigned char to represent the current number (0 for unassigned squares). We will print unsigned chars as numbers using the prefix unary operator+.
-- std::optional< std::bitset<9> > that reports the possible digits where bitset[i] represents whether i + 1 is a valid number here. We use std::optional since squares given in the problem statement do not require that we track their possible digits. They are set in stone.
+- std::optional< std::bitset<n> > that reports the possible digits where bitset[i] represents whether i + 1 is a valid number here. We use std::optional since squares given in the problem statement do not require that we track their possible digits. They are set in stone.
 - unsigned int row and column coordinates of the given Square.
 
 ### Grid
 
-The Grid's API is a 9-by-9 two-dimensional array of Squares implemented as the one-dimensional std::array< Square, 9 * 9 >. The fixed squares (those given in the problem) will be skipped over while iterating over the open squares to make code more readable.
+The Grid's API is an n-by-n two-dimensional array of Squares implemented as the one-dimensional std::array< Square, n * n >. The fixed squares (those given in the problem) will be skipped over while iterating over the open squares to make code more readable.
 
 ## Print Format
 
