@@ -4,9 +4,9 @@ An expressively coded, time & space efficient n-by-n Sudoku puzzle solver using 
 
 ## Formatting
 
-Usage: ./sudoku < puzzles_list.txt > solutions.txt
+Usage: ./sudoku puzzle.txt > solution.txt
 
-The input is piped from cin but we recommend using IO redirection to get the puzzles piped into the program. Puzzles should be formatted as a n x n square of digits. Non-numeric characters are ignored in the input. Use a numeric '0' for unknown entries. For each puzzle in puzzles_list.txt, the solver will output a well-formatted solution (if it exists) to solutions.txt.
+Puzzles should be formatted as a n x n square of digits. Non-numeric characters are ignored in the input. Use a numeric '0' for unknown entries. Given the puzzle in puzzle.txt, the solver will output a well-formatted solution (if it exists) to solution.txt.
 
 ## Algorithm Overview
 
