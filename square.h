@@ -8,8 +8,21 @@ Copyright 2020. Siwei Wang.
 #include <utility>
 #include <vector>
 
-constexpr unsigned NUM_DIGITS = 9;
-constexpr unsigned BOX_SIDE = NUM_DIGITS / 3;
+// Returns floor of square root of x
+constexpr unsigned floor_sqrt(unsigned x) {
+  if (x == 0 || x == 1) return x;
+  unsigned i = 1;
+  for (unsigned result = 1; result <= x; result = i * i) {
+    ++i;
+  }
+  return i - 1;
+}
+
+//! Set parameter for NUM_DIGITS. Must be square.
+
+static constexpr unsigned NUM_DIGITS = 9;
+static constexpr unsigned BOX_SIDE = floor_sqrt(NUM_DIGITS);
+static constexpr unsigned NUM_SQUARES = NUM_DIGITS * NUM_DIGITS;
 
 /**
  * A Square represents each individual position on the Sudoku grid.
@@ -26,8 +39,9 @@ class Square {
   // valid number.
   std::optional<std::bitset<NUM_DIGITS> > m_possible_values;
 
-  // A simple constructor given the coordinates of this square. Default value of
-  // 0 if no number is given.
+  /**
+   * Default value of 0 for this square.
+   */
   Square() noexcept;
 
   /**
@@ -35,10 +49,4 @@ class Square {
    * REQUIRES : possible_values.has_value(). Otherwise, std::optional throws.
    */
   std::vector<unsigned char> possible() const;
-
-  /**
-   * A basic print operator that simply prints out the value associated with it.
-   * Uses unary prefix operator+ to get numeric result of number.
-   */
-  friend std::ostream& operator<<(std::ostream& os, const Square& sq);
 };

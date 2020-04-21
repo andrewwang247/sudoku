@@ -2,7 +2,7 @@
 Copyright 2020. Siwei Wang.
 */
 #include "square.h"
-#include <exception>
+
 using std::bitset;
 using std::nullopt;
 using std::ostream;
@@ -13,7 +13,7 @@ Square::Square() noexcept
 
 vector<unsigned char> Square::possible() const {
   // Get reference to the underlying bitset.
-  const auto& bs(m_possible_values.value());
+  const auto& bs = m_possible_values.value();
   // Make the vector and reserve the right amount of space.
   vector<unsigned char> v;
   v.reserve(bs.count());
@@ -21,9 +21,4 @@ vector<unsigned char> Square::possible() const {
   for (unsigned char i = 0; i < bs.size(); ++i)
     if (bs[i]) v.emplace_back(static_cast<unsigned char>(i + 1));
   return v;
-}
-
-ostream& operator<<(ostream& os, const Square& sq) {
-  // Unary plus operator needed to print as number.
-  return os << +sq.m_number;
 }

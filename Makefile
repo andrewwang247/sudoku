@@ -1,11 +1,11 @@
-# Personal Makefile Template.
-CXX = g++
-CXX_FLAGS = -std=c++17 -Wconversion -Wall -Werror -Wextra -pedantic
-OPT = -O3 -DNDEBUG
-DEBUG = -g3 -DDEBUG
+# Compiler and flags.
+CXX := g++ -std=c++17
+FLAGS := -Wall -Werror -Wextra -Wconversion -pedantic -Wfloat-equal -Wduplicated-branches -Wduplicated-cond -Wshadow -Wdouble-promotion -Wundef
+OPT := -O3 -DNDEBUG
+DEBUG := -ggdb3 -DDEBUG
 
 # Put executable and linked file names. Do NOT include extensions! 
-EXECUTABLE = sudoku
+EXE = sudoku
 LINKED_FILES = square grid
 
 # File list expansions.
@@ -13,16 +13,16 @@ LINKED_CPP = $(foreach file, $(LINKED_FILES), $(file).cpp)
 LINKED_O = $(foreach file, $(LINKED_FILES), $(file).o)
 
 # Build optimized executable.
-release : $(EXECUTABLE).cpp $(LINKED_CPP)
-	$(CXX) $(CXX_FLAGS) $(OPT) -c $(EXECUTABLE).cpp $(LINKED_CPP)
-	$(CXX) $(CXX_FLAGS) $(OPT) $(EXECUTABLE).o $(LINKED_O) -o $(EXECUTABLE)
+release : $(EXE).cpp $(LINKED_CPP)
+	$(CXX) $(FLAGS) $(OPT) -c $(EXE).cpp $(LINKED_CPP)
+	$(CXX) $(FLAGS) $(OPT) $(EXE).o $(LINKED_O) -o $(EXE)
 
 # Build with debug features.
-debug : $(EXECUTABLE).cpp $(LINKED_CPP)
-	$(CXX) $(CXX_FLAGS) $(DEBUG) -c $(EXECUTABLE).cpp $(LINKED_CPP)
-	$(CXX) $(CXX_FLAGS) $(DEBUG) $(EXECUTABLE).cpp $(LINKED_CPP) -o $(EXECUTABLE)_debug
+debug : $(EXE).cpp $(LINKED_CPP)
+	$(CXX) $(FLAGS) $(DEBUG) -c $(EXE).cpp $(LINKED_CPP)
+	$(CXX) $(FLAGS) $(DEBUG) $(EXE).cpp $(LINKED_CPP) -o $(EXE)
 
 # Remove executable and all runtime outputs.
 .PHONY : clean
 clean : 
-	rm -f $(EXECUTABLE) $(EXECUTABLE)_debug *.o
+	rm -r $(EXE) $(LINKED_O) $(EXE).o

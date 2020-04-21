@@ -3,9 +3,10 @@ Copyright 2020. Siwei Wang.
 */
 #pragma once
 #include <array>
+
 #include "square.h"
 
-using grid_t = std::array<Square, NUM_DIGITS * NUM_DIGITS>;
+using grid_t = std::array<Square, NUM_SQUARES>;
 
 class Grid {
  private:
@@ -13,7 +14,12 @@ class Grid {
   grid_t m_grid;
 
   // Enumeration of possible puzzle States.
-  enum class PuzzleState { Solution_Exists, No_Solution, Invalid_Puzzle };
+  enum class PuzzleState {
+    Unsolved,
+    Solution_Exists,
+    No_Solution,
+    Invalid_Puzzle
+  };
 
  public:
   /**
@@ -25,8 +31,8 @@ class Grid {
   /**
    * Basic reference access by row and column index.
    */
-  inline Square& at(unsigned row, unsigned col);
-  inline const Square& at(unsigned row, unsigned col) const;
+  Square& at(unsigned row, unsigned col);
+  const Square& at(unsigned row, unsigned col) const;
 
   /**
    * Reads a 9x9 square of digits from is into the grid.
@@ -47,6 +53,12 @@ class Grid {
   friend std::ostream& operator<<(std::ostream& os, Grid& g);
 
   /**
+   * Used at the beginning to ensure that the grid is in a valid state before
+   * starting. If invalid, modifies m_state to the invalid state.
+   */
+  void check_state() noexcept;
+
+  /**
    * Interface function that solves the Sudoku grid.
    * Only solves if state != Invalid_Puzzle.
    * MODIFIES: grid, solution_exists.
@@ -59,10 +71,10 @@ class Grid {
   PuzzleState m_state;
 
   /**
-   * Used at the beginning to ensure that the grid is in a valid state before
-   * starting. If invalid, modifies m_state to the invalid state.
+   * Checks the subgrid starting at (row_start, col_start)
+   * REQUIRES: bound indexing is correct.
    */
-  void check_state() noexcept;
+  bool check_subgrid(unsigned row, unsigned col) const;
 
   /**
    * Updates the bitset in the Square *it to reflect the possible values *it can

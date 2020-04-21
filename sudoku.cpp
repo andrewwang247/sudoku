@@ -4,6 +4,7 @@ Copyright 2020. Siwei Wang.
 #include <chrono>
 #include <exception>
 #include <fstream>
+
 #include "grid.h"
 using std::cout;
 using std::ifstream;
@@ -15,6 +16,10 @@ using std::chrono::microseconds;
 
 int main(int argc, char** argv) {
   ios_base::sync_with_stdio(false);
+
+  static_assert(BOX_SIDE * BOX_SIDE == NUM_DIGITS,
+                "NUM_DIGITS must be a square number.");
+
   if (argc != 2) {
     throw runtime_error("Usage ./sudoku puzzle.txt > solution.txt");
   }
@@ -22,10 +27,13 @@ int main(int argc, char** argv) {
 
   Grid sudoku(fin);
   cout << "Input Puzzle:\n" << sudoku;
+  sudoku.check_state();
+
   const auto start_time = high_resolution_clock::now();
   sudoku.solve();
   const auto end_time = high_resolution_clock::now();
   cout << "Computer Solution:\n" << sudoku;
+
   const auto duration =
       duration_cast<microseconds>(end_time - start_time).count();
   cout << "Time to solve: " << duration << " microseconds.\n";
