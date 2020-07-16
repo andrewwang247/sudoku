@@ -7,6 +7,9 @@ cppfiles="*.h *.cpp"
 # List of all Python files.
 pyfiles="*.py"
 
+printf "Running clang-format...\n\n"
+clang-format -i -style=file $cppfiles
+
 printf "Running cppcheck...\n\n"
 cppcheck --language=c++ --std=c++11 --enable=all --quiet \
     --template=gcc --suppress=missingIncludeSystem $cppfiles
